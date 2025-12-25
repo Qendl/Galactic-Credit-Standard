@@ -4,39 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galactic Credit Standard (CRED)</title>
+    <!-- Иконка вкладки браузера -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/icon_32.png">
+    
     <style>
-        body { background-color: #0b0b0f; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 40px 20px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .logo { width: 140px; height: 140px; margin-bottom: 25px; border-radius: 50%; box-shadow: 0 0 35px rgba(160, 100, 255, 0.4); transition: transform 0.5s; }
-        .logo:hover { transform: rotate(10deg) scale(1.05); }
-        h1 { margin: 10px 0 5px; font-weight: 600; font-size: 28px; background: -webkit-linear-gradient(#fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        h3 { margin-top: 0; color: #8e8e93; font-weight: 400; font-size: 16px; margin-bottom: 35px; }
-        
-        .btn { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 320px; padding: 16px; margin: 12px auto; border-radius: 16px; text-decoration: none; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s; border: none; box-sizing: border-box; }
-        
-        .btn-gold { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: #000; box-shadow: 0 4px 15px rgba(253, 185, 49, 0.3); }
-        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(253, 185, 49, 0.5); }
-        
-        .btn-dark { background: #1c1c1e; color: #fff; border: 1px solid #333; }
-        .btn-dark:hover { background: #2c2c2e; border-color: #555; }
+        /* Базовый дизайн (Dark Theme) */
+        body {
+            background-color: #0b0b0f;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
 
-        .contract-box { background: #151518; padding: 15px; border-radius: 12px; margin-top: 40px; border: 1px dashed #333; font-size: 13px; color: #888; cursor: pointer; }
-        .contract-box:active { background: #222; }
-        .address { font-family: monospace; color: #bbb; word-break: break-all; margin-top: 5px; }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Логотип с свечением */
+        .logo {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 25px;
+            border-radius: 50%;
+            box-shadow: 0 0 35px rgba(160, 100, 255, 0.4);
+            transition: transform 0.5s;
+        }
+        .logo:hover {
+            transform: rotate(10deg) scale(1.05);
+        }
+
+        /* Тексты */
+        h1 {
+            margin: 10px 0 5px;
+            font-weight: 600;
+            font-size: 28px;
+            background: -webkit-linear-gradient(#fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h3 {
+            margin-top: 0;
+            color: #8e8e93;
+            font-weight: 400;
+            font-size: 16px;
+            margin-bottom: 35px;
+        }
+        
+        /* Кнопки */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 320px;
+            padding: 16px;
+            margin: 12px auto;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+            box-sizing: border-box;
+        }
+        
+        /* Золотая кнопка */
+        .btn-gold {
+            background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(253, 185, 49, 0.3);
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 185, 49, 0.5);
+        }
+        
+        /* Темная кнопка */
+        .btn-dark {
+            background: #1c1c1e;
+            color: #fff;
+            border: 1px solid #333;
+        }
+        .btn-dark:hover {
+            background: #2c2c2e;
+            border-color: #555;
+        }
+
+        /* Блок с адресом контракта */
+        .contract-box {
+            background: #151518;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 40px;
+            border: 1px dashed #333;
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+            user-select: none;
+        }
+        .contract-box:active {
+            background: #222;
+        }
+        .address {
+            font-family: monospace;
+            color: #bbb;
+            word-break: break-all;
+            margin-top: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
+        <!-- Логотип -->
         <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo" alt="CRED Logo">
+        
+        <!-- Заголовок -->
         <h1>Galactic Credit Standard</h1>
         <h3>Official Payment Ecosystem</h3>
 
-        <!-- УПРОЩЕННАЯ КНОПКА -->
+        <!-- Главная кнопка -->
         <button onclick="simpleAdd()" class="btn btn-gold">
             🦊 Connect & Add CRED
         </button>
 
+        <!-- Внешние ссылки -->
         <a href="https://app.uniswap.org/explore/tokens/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378" target="_blank" class="btn btn-dark">
             🦄 Buy on Uniswap
         </a>
@@ -44,26 +141,27 @@
             📈 Live Chart
         </a>
 
+        <!-- Копирование адреса -->
         <div class="contract-box" onclick="copyAddress()">
             <span>Tap to copy Contract Address:</span>
             <div class="address">0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378</div>
         </div>
     </div>
 
+    <!-- Скрипт (Logic) -->
     <script>
         async function simpleAdd() {
-            // Если кошелька нет вообще
+            // Проверка, установлен ли кошелек
             if (typeof window.ethereum === 'undefined') {
-                alert('Wallet not found! Please use Trust Wallet or MetaMask.');
+                alert('Wallet not found! Please use Trust Wallet or MetaMask browser.');
                 return;
             }
 
             try {
-                // 1. Просто просим доступ к кошельку
+                // 1. Запрашиваем доступ к аккаунту
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-                // 2. Предлагаем добавить токен
-                // Trust Wallet сам разберется с сетью
+                // 2. Добавляем токен
                 await window.ethereum.request({
                     method: 'wallet_watchAsset',
                     params: {
@@ -77,15 +175,19 @@
                     },
                 });
             } catch (error) {
-                // Если произошла ошибка (или токен уже есть) - мы просто молчим, чтобы не пугать юзера.
-                // Можно вывести в консоль для проверки (F12)
-                console.log("Token add skipped or failed: ", error);
+                // Если возникла ошибка (например, юзер отклонил или токен уже есть)
+                // Мы просто пишем это в консоль, чтобы не пугать юзера всплывающими окнами
+                console.log("Action cancelled or token already added.", error);
             }
         }
 
+        // Функция копирования
         function copyAddress() {
-            navigator.clipboard.writeText('0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378');
-            alert('Contract Copied!');
+            navigator.clipboard.writeText('0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378').then(function() {
+                alert('Contract Address Copied!');
+            }, function(err) {
+                console.error('Async: Could not copy text: ', err);
+            });
         }
     </script>
 </body>
