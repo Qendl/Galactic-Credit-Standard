@@ -4,46 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galactic Credit Standard (CRED)</title>
-    <!-- Иконка вкладки браузера -->
+    
+    <!-- Иконка во вкладке браузера -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/icon_32.png">
     
     <style>
-        /* Базовый дизайн (Dark Theme) */
+        /* Общий стиль: Космос (Темный фон) */
         body {
             background-color: #0b0b0f;
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 10px;
             margin: 0;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
-        /* Логотип с свечением */
-        .logo {
-            width: 140px;
-            height: 140px;
-            margin-bottom: 25px;
+        /* Логотип проекта */
+        .coin-logo {
+            width: 130px;
+            height: 130px;
+            margin-bottom: 20px;
             border-radius: 50%;
-            box-shadow: 0 0 35px rgba(160, 100, 255, 0.4);
-            transition: transform 0.5s;
+            box-shadow: 0 0 45px rgba(160, 100, 255, 0.4);
+            transition: transform 0.3s;
         }
-        .logo:hover {
-            transform: rotate(10deg) scale(1.05);
+        .coin-logo:hover {
+            transform: scale(1.05);
         }
 
-        /* Тексты */
+        /* Заголовки */
         h1 {
             margin: 10px 0 5px;
             font-weight: 600;
-            font-size: 28px;
-            background: -webkit-linear-gradient(#fff, #aaa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 26px;
+            letter-spacing: 1px;
         }
         h3 {
             margin-top: 0;
@@ -52,143 +51,138 @@
             font-size: 16px;
             margin-bottom: 35px;
         }
+
+        /* КАРТОЧКА С QR КОДОМ (Центральный элемент) */
+        .qr-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+            width: 80%; /* Адаптивная ширина */
+            max-width: 300px;
+        }
         
-        /* Кнопки */
+        .qr-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .scan-hint {
+            color: #333;
+            font-weight: 700;
+            margin-top: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Ссылки-кнопки (Uniswap и График) */
         .btn {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 320px;
-            padding: 16px;
+            max-width: 340px;
+            padding: 16px 0;
             margin: 12px auto;
-            border-radius: 16px;
+            border-radius: 14px;
             text-decoration: none;
             font-weight: 600;
             font-size: 16px;
             cursor: pointer;
-            transition: 0.2s;
-            border: none;
-            box-sizing: border-box;
-        }
-        
-        /* Золотая кнопка */
-        .btn-gold {
-            background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
-            color: #000;
-            box-shadow: 0 4px 15px rgba(253, 185, 49, 0.3);
-        }
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(253, 185, 49, 0.5);
-        }
-        
-        /* Темная кнопка */
-        .btn-dark {
-            background: #1c1c1e;
-            color: #fff;
+            transition: all 0.2s;
             border: 1px solid #333;
         }
-        .btn-dark:hover {
-            background: #2c2c2e;
+        
+        .btn-gold {
+            background: linear-gradient(135deg, #2a2a30, #1c1c1e); 
+            color: #FFD700; 
+            border-color: #555;
+        }
+        
+        .btn-blue {
+            background: linear-gradient(135deg, #2a2a30, #1c1c1e);
+            color: #4da6ff;
             border-color: #555;
         }
 
-        /* Блок с адресом контракта */
+        .btn:hover {
+            transform: translateY(-3px);
+            background: #333;
+        }
+
+        /* Блок адреса для копирования */
         .contract-box {
-            background: #151518;
-            padding: 15px;
-            border-radius: 12px;
             margin-top: 40px;
-            border: 1px dashed #333;
-            font-size: 13px;
-            color: #888;
+            font-size: 12px;
+            color: #666;
             cursor: pointer;
+            background: #121215;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px dashed #333;
             user-select: none;
         }
         .contract-box:active {
             background: #222;
+            color: #fff;
         }
-        .address {
-            font-family: monospace;
-            color: #bbb;
+        .contract-address {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #aaa;
             word-break: break-all;
             margin-top: 5px;
-            font-size: 14px;
         }
+
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Логотип -->
-        <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo" alt="CRED Logo">
+        <!-- Логотип Проекта -->
+        <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="coin-logo" alt="CRED Logo">
         
-        <!-- Заголовок -->
         <h1>Galactic Credit Standard</h1>
         <h3>Official Payment Ecosystem</h3>
 
-        <!-- Главная кнопка -->
-        <button onclick="simpleAdd()" class="btn btn-gold">
-            🦊 Connect & Add CRED
-        </button>
+        <!-- БЛОК С QR КОДОМ -->
+        <div class="qr-card">
+            <!-- Ссылка на ваш официальный QR -->
+            <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/QR_Official.png" class="qr-image" alt="QR Code">
+            <div class="scan-hint">Scan to Connect / Pay</div>
+        </div>
 
-        <!-- Внешние ссылки -->
-        <a href="https://app.uniswap.org/explore/tokens/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378" target="_blank" class="btn btn-dark">
+        <!-- Кнопки действий -->
+        <a href="https://app.uniswap.org/explore/tokens/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378" target="_blank" class="btn btn-gold">
             🦄 Buy on Uniswap
         </a>
-        <a href="https://dexscreener.com/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378" target="_blank" class="btn btn-dark">
-            📈 Live Chart
+        
+        <a href="https://dexscreener.com/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378" target="_blank" class="btn btn-blue">
+            📈 View Live Chart
         </a>
 
         <!-- Копирование адреса -->
         <div class="contract-box" onclick="copyAddress()">
-            <span>Tap to copy Contract Address:</span>
-            <div class="address">0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378</div>
+            Tap to Copy Contract Address:
+            <div class="contract-address">0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378</div>
         </div>
     </div>
 
-    <!-- Скрипт (Logic) -->
+    <!-- Простой скрипт копирования адреса -->
     <script>
-        async function simpleAdd() {
-            // Проверка, установлен ли кошелек
-            if (typeof window.ethereum === 'undefined') {
-                alert('Wallet not found! Please use Trust Wallet or MetaMask browser.');
-                return;
-            }
-
-            try {
-                // 1. Запрашиваем доступ к аккаунту
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-                // 2. Добавляем токен
-                await window.ethereum.request({
-                    method: 'wallet_watchAsset',
-                    params: {
-                        type: 'ERC20',
-                        options: {
-                            address: '0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378',
-                            symbol: 'CRED',
-                            decimals: 18,
-                            image: 'https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png',
-                        },
-                    },
-                });
-            } catch (error) {
-                // Если возникла ошибка (например, юзер отклонил или токен уже есть)
-                // Мы просто пишем это в консоль, чтобы не пугать юзера всплывающими окнами
-                console.log("Action cancelled or token already added.", error);
-            }
-        }
-
-        // Функция копирования
         function copyAddress() {
             navigator.clipboard.writeText('0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378').then(function() {
-                alert('Contract Address Copied!');
+                alert('Contract Address Copied! ✅');
             }, function(err) {
-                console.error('Async: Could not copy text: ', err);
+                console.error('Error copying text: ', err);
             });
         }
     </script>
+
 </body>
 </html>
