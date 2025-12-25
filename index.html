@@ -28,19 +28,14 @@
 </head>
 <body>
     <div class="container">
-        <!-- Logo -->
         <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo" alt="CRED Logo">
-        
-        <!-- Headers -->
         <h1>Galactic Credit Standard</h1>
         <h3>Official Payment Ecosystem</h3>
 
-        <!-- Magic Button (Add to Wallet) -->
-        <button onclick="addToken()" class="btn btn-gold">
+        <button onclick="fullConnect()" class="btn btn-gold">
             🦊 Connect & Add CRED
         </button>
 
-        <!-- Links -->
         <a href="https://app.uniswap.org/explore/tokens/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378" target="_blank" class="btn btn-dark">
             🦄 Buy on Uniswap
         </a>
@@ -48,40 +43,54 @@
             📈 Live Chart
         </a>
 
-        <!-- Contract Copy Area -->
         <div class="contract-box" onclick="copyAddress()">
             <span>Tap to copy Contract Address:</span>
             <div class="address">0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378</div>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script>
-        async function addToken() {
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    // ЭТА СТРОЧКА ЗАПРОСИТ ПОДКЛЮЧЕНИЕ ПЕРЕД ДОБАВЛЕНИЕМ:
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+        async function fullConnect() {
+            if (typeof window.ethereum === 'undefined') {
+                alert('Wallet not found! Please open this in Trust Wallet Browser or MetaMask.');
+                return;
+            }
 
-                    // А теперь добавляем токен:
+            try {
+                // 1. Сначала просим подключиться (если еще не подключены)
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // 2. ПРИНУДИТЕЛЬНО переключаем на Polygon (Chain ID 137 = 0x89)
+                // Если мы в другой сети - токен добавить нельзя
+                try {
                     await window.ethereum.request({
-                        method: 'wallet_watchAsset',
-                        params: {
-                            type: 'ERC20',
-                            options: {
-                                address: '0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378',
-                                symbol: 'CRED',
-                                decimals: 18,
-                                image: 'https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png',
-                            },
-                        },
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x89' }], // Hex for 137
                     });
-                } catch (error) { 
-                    console.error(error); 
-                    alert('Error connecting wallet. Check your extension.');
+                } catch (switchError) {
+                    // Если сети Polygon нет в кошельке (редко, но бывает), пробуем добавить её
+                    if (switchError.code === 4902) {
+                         alert('Please add Polygon Network to your wallet manually first.');
+                         return;
+                    }
                 }
-            } else {
-                alert('Wallet not found. Please install MetaMask or Trust Wallet.');
+
+                // 3. Только теперь добавляем токен
+                await window.ethereum.request({
+                    method: 'wallet_watchAsset',
+                    params: {
+                        type: 'ERC20',
+                        options: {
+                            address: '0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378',
+                            symbol: 'CRED',
+                            decimals: 18,
+                            image: 'https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png',
+                        },
+                    },
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Operation failed. Check if your wallet is unlocked.');
             }
         }
 
