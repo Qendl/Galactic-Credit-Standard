@@ -37,7 +37,7 @@
 
         <!-- Magic Button (Add to Wallet) -->
         <button onclick="addToken()" class="btn btn-gold">
-            🦊 Add CRED to MetaMask / Trust
+            🦊 Connect & Add CRED
         </button>
 
         <!-- Links -->
@@ -60,6 +60,10 @@
         async function addToken() {
             if (typeof window.ethereum !== 'undefined') {
                 try {
+                    // ЭТА СТРОЧКА ЗАПРОСИТ ПОДКЛЮЧЕНИЕ ПЕРЕД ДОБАВЛЕНИЕМ:
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                    // А теперь добавляем токен:
                     await window.ethereum.request({
                         method: 'wallet_watchAsset',
                         params: {
@@ -72,9 +76,12 @@
                             },
                         },
                     });
-                } catch (error) { console.error(error); }
+                } catch (error) { 
+                    console.error(error); 
+                    alert('Error connecting wallet. Check your extension.');
+                }
             } else {
-                alert('Open this page inside MetaMask Browser or Trust Wallet DApp Browser to use this feature.');
+                alert('Wallet not found. Please install MetaMask or Trust Wallet.');
             }
         }
 
