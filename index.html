@@ -6,14 +6,14 @@
     <title>Galactic Wallet</title>
     
     <style>
-        /* === 1. ЭСТЕТИКА (PURE BLACK) === */
+        /* === 1. BASIC STYLES (PURE BLACK) === */
         body { 
             background-color: #000000; 
             color: #ffffff; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0; 
             padding: 0;
-            padding-bottom: 90px; 
+            padding-bottom: 90px; /* Отступ для меню */
             text-align: center;
             -webkit-tap-highlight-color: transparent;
         }
@@ -34,11 +34,12 @@
         
         h2 { font-weight: 800; font-size: 26px; margin: 0; letter-spacing: -0.5px; }
         
-        /* WEB3MODAL (КНОПКА ПОДКЛЮЧЕНИЯ) */
-        /* Мы центрируем стандартную кнопку библиотеки */
+        /* КНОПКА ПОДКЛЮЧЕНИЯ */
         w3m-button {
             margin-top: 20px;
             display: inline-block;
+            position: relative;
+            z-index: 1;
         }
 
         /* ВКЛАДКИ */
@@ -57,7 +58,7 @@
         }
         .qr-card img { width: 100%; display: block; }
 
-        /* МЕНЮ ДЕЙСТВИЙ (Список ссылок) */
+        /* СПИСОК ДЕЙСТВИЙ */
         .action-list { 
             background: #111; 
             border-radius: 16px; 
@@ -82,14 +83,14 @@
         .label { font-size: 16px; font-weight: 500; flex-grow: 1; }
         .arrow { color: #444; font-weight: bold; font-size: 14px; }
 
-        /* НИЖНЕЕ МЕНЮ (NAVIGATION) */
+        /* НИЖНЕЕ МЕНЮ */
         .nav-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(15px);
             border-top: 1px solid #222;
             display: flex; justify-content: space-around;
-            padding: 12px 0 35px; /* Для iPhone (Home bar area) */
+            padding: 12px 0 35px; /* Для iPhone Home Bar */
             z-index: 1000;
         }
         .nav-btn {
@@ -101,18 +102,25 @@
         .nav-btn.active { color: #fff; }
         .nav-btn span.icon { font-size: 22px; margin-bottom: 4px; }
 
-        .contract-addr { font-family: monospace; color: #444; font-size: 11px; margin-top: 20px; word-break: break-all; cursor: pointer; }
+        .contract-addr { 
+            font-family: monospace; color: #444; 
+            font-size: 11px; margin-top: 20px; 
+            word-break: break-all; cursor: pointer; 
+        }
+
+        /* FIX ДЛЯ TELEGRAM: Окно подключения всегда сверху */
+        :root { --w3m-z-index: 9999 !important; }
 
     </style>
 
-    <!-- ПОДКЛЮЧЕНИЕ AppKit (Web3Modal) - САМОЕ ВАЖНОЕ ДЛЯ ТЕЛЕГРАМА -->
+    <!-- СКРИПТ ПОДКЛЮЧЕНИЯ (Web3Modal) -->
     <script type="module">
         import { createWeb3Modal, defaultConfig } from 'https://esm.sh/@web3modal/ethers@5.0.0'
 
-        // 1. Project ID (Можно использовать этот публичный, он рабочий)
+        // 1. Project ID
         const projectId = '2c222c6077366f0763944634f379659b'
 
-        // 2. Сеть Polygon
+        // 2. Настройки сети
         const polygon = {
             chainId: 137,
             name: 'Polygon',
@@ -121,20 +129,27 @@
             rpcUrl: 'https://polygon-rpc.com'
         }
 
-        // 3. Метаданные (Для красивого отображения в кошельке при подключении)
+        // 3. Метаданные
         const metadata = {
             name: 'Galactic Wallet',
-            description: 'Official App',
+            description: 'App',
             url: 'https://qendl.github.io',
             icons: ['https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png']
         }
 
-        // 4. Инициализация (Создает ту самую кнопку <w3m-button>)
-        const modal = createWeb3Modal({
+        // 4. Инициализация (с отключенным Email для простоты)
+        createWeb3Modal({
             ethersConfig: defaultConfig({ metadata }),
             chains: [polygon],
             projectId,
-            enableAnalytics: true 
+            enableAnalytics: false,
+            enableEmail: false, // Отключаем Email, сразу показываем кошельки
+            allWallets: 'SHOW', 
+            themeMode: 'dark',
+            themeVariables: {
+                '--w3m-accent': '#FFD700', // Золотой цвет акцента
+                '--w3m-border-radius-master': '1px'
+            }
         })
     </script>
 </head>
@@ -144,14 +159,14 @@
     <div class="header fade-in">
         <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo">
         <h2>Galactic Wallet</h2>
-        <!-- Умная Кнопка от Web3Modal -->
+        <!-- КНОПКА ПОДКЛЮЧЕНИЯ -->
         <w3m-button balance="hide"></w3m-button>
     </div>
 
-    <!-- ТАБ 1: КОШЕЛЕК (QR) -->
+    <!-- ТАБ 1: КОШЕЛЕК -->
     <div id="tab-wallet" class="tab-content active fade-in">
-        
         <p style="color:#666; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-top:20px; font-weight:700;">Receive Assets</p>
+        
         <div class="qr-card">
             <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/QR_Official.png">
         </div>
@@ -159,10 +174,9 @@
         <div class="contract-addr" onclick="copyAddr()">
             0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378 ❐
         </div>
-        
     </div>
 
-    <!-- ТАБ 2: РЫНОК (БИРЖИ) -->
+    <!-- ТАБ 2: РЫНОК -->
     <div id="tab-market" class="tab-content fade-in">
         <div class="action-list">
             
@@ -187,7 +201,7 @@
         </div>
     </div>
 
-    <!-- ТАБ 3: ИНФО (СОЦСЕТИ) -->
+    <!-- ТАБ 3: ИНФО -->
     <div id="tab-info" class="tab-content fade-in">
         <div class="action-list">
             
@@ -199,7 +213,7 @@
 
             <a href="https://github.com/Qendl/Galactic-Credit-Standard" target="_blank" class="action-item">
                 <span class="icon">🐙</span>
-                <span class="label">GitHub & Audit</span>
+                <span class="label">GitHub</span>
                 <span class="arrow">›</span>
             </a>
 
@@ -210,7 +224,7 @@
             </div>
 
         </div>
-        <p style="margin-top:30px; color:#333; font-size:12px;">v 1.0.0 • Secured by Polygon</p>
+        <p style="margin-top:30px; color:#333; font-size:12px;">Secured by Polygon Network</p>
     </div>
 
     <!-- НИЖНЕЕ МЕНЮ -->
@@ -229,24 +243,23 @@
         </button>
     </div>
 
-    <!-- ПРОСТАЯ ЛОГИКА ВКЛАДОК -->
+    <!-- СКРИПТ НАВИГАЦИИ -->
     <script>
         function switchTab(tabId, navBtn) {
-            // Скрываем все вкладки
+            // Скрыть все вкладки
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // Убираем подсветку кнопок
+            // Убрать подсветку кнопок
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             
-            // Показываем нужную
+            // Показать выбранное
             document.getElementById(tabId).classList.add('active');
             navBtn.classList.add('active');
         }
 
         function copyAddr() {
             navigator.clipboard.writeText('0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378');
-            // Маленькая вибрация на телефоне для ощущения клика
-            if(navigator.vibrate) navigator.vibrate(50); 
-            alert('Contract Copied!');
+            if(navigator.vibrate) navigator.vibrate(50);
+            alert('Copied!');
         }
     </script>
 </body>
