@@ -3,269 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Galactic Super App</title>
-    <!-- Подключаем Ethers.js для работы с блокчейном -->
+    <title>Galactic App</title>
+    <!-- Библиотека для связи с блокчейном -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
     <style>
-        /* ОСНОВНОЙ СТИЛЬ */
+        /* --- ЭСТЕТИКА (DARK LUXURY) --- */
         body { 
-            background-color: #0b0b0f; 
-            color: #fff; 
-            font-family: 'Segoe UI', Helvetica, sans-serif; 
-            text-align: center; 
+            background-color: #000000; 
+            color: #ffffff; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0; 
-            padding-bottom: 90px; /* Отступ для нижнего меню */
+            padding: 0;
+            padding-bottom: 100px; /* Отступ под меню */
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        /* Анимация плавного появления */
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ВЕРХНЯЯ ЧАСТЬ */
+        .header { padding: 35px 20px 10px; text-align: center; }
+        
+        .logo-img { 
+            width: 85px; height: 85px; 
+            border-radius: 50%; 
+            box-shadow: 0 0 50px rgba(160, 100, 255, 0.2); 
+            margin-bottom: 15px;
         }
         
+        h2 { margin: 0; font-weight: 700; font-size: 26px; letter-spacing: -0.5px; }
+        .status-badge { 
+            display: inline-block; 
+            font-size: 13px; color: #888; 
+            background: rgba(255,255,255,0.05); 
+            padding: 5px 12px; border-radius: 20px; margin-top: 10px;
+        }
+
+        /* Кнопка подключения (по центру) */
+        .main-connect {
+            background: #fff; color: #000;
+            border: none; padding: 12px 28px;
+            border-radius: 30px; font-weight: 700; font-size: 15px;
+            margin-top: 20px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.15);
+            transition: 0.2s;
+        }
+        .main-connect:active { transform: scale(0.95); opacity: 0.9; }
+
         /* Вкладки */
-        .tab-content { display: none; padding: 20px; animation: fadeIn 0.4s; }
+        .tab-content { display: none; padding: 20px; }
         .tab-content.active { display: block; }
 
-        /* Логотип */
-        .logo { 
-            width: 100px; 
-            height: 100px; 
-            margin: 20px auto 10px; 
-            display: block; 
-            border-radius: 50%; 
-            box-shadow: 0 0 35px rgba(160, 100, 255, 0.4); 
-        }
-        
-        h2 { font-weight: 400; letter-spacing: 1px; margin-bottom: 25px; color: #eee; }
-        h4 { margin: 0 0 10px 0; color: #FFD700; font-size: 18px; }
-        p { color: #aaa; font-size: 13px; line-height: 1.4; margin: 0 0 15px 0; }
-
-        /* Карточки */
-        .card { 
-            background: #1c1c20; 
-            border: 1px solid #333; 
-            border-radius: 18px; 
-            padding: 20px; 
-            margin-bottom: 15px; 
-            text-align: left; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        /* КАРТОЧКИ (Glassmorphism) */
+        .card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 16px;
+            position: relative;
         }
 
-        /* Кнопки */
-        .btn { 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            border: none; 
-            cursor: pointer; 
-            margin-top: 8px; 
-            font-size: 15px;
-            transition: 0.2s;
-        }
-        .btn-primary { 
-            background: linear-gradient(135deg, #FFD700, #FDB931); 
-            color: #000; 
-            box-shadow: 0 4px 12px rgba(253, 185, 49, 0.3);
-        }
-        .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
-        
-        .btn-outline { 
-            background: transparent; 
-            border: 1px solid #555; 
-            color: #fff; 
-        }
-        .btn-outline:active { background: #222; }
-
-        /* QR код контейнер */
-        .qr-box {
+        /* QR Код */
+        .qr-container {
             background: white;
             padding: 10px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-top: 20px;
+            border-radius: 18px;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            display: flex; align-items: center; justify-content: center;
         }
+        .qr-container img { width: 100%; display: block; }
 
-        /* НИЖНЕЕ МЕНЮ НАВИГАЦИИ */
-        .bottom-nav { 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            background: rgba(21, 21, 24, 0.95); 
-            backdrop-filter: blur(10px);
-            border-top: 1px solid #333; 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 12px 0 25px 0; 
+        /* КНОПКИ-СПИСКИ (Apple Style) */
+        .action-list { margin-top: 10px; }
+        .action-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1a1a1a;
+            padding: 16px;
+            border-bottom: 1px solid #2a2a2a;
+            cursor: pointer;
+        }
+        .action-item:first-child { border-top-left-radius: 16px; border-top-right-radius: 16px; }
+        .action-item:last-child { border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; border-bottom: none; }
+        .action-item:active { background: #222; }
+        
+        .action-icon { font-size: 20px; margin-right: 15px; width: 24px; text-align: center; }
+        .action-label { flex-grow: 1; font-weight: 500; font-size: 16px; color: #fff; }
+        .action-arrow { color: #444; font-weight: bold; }
+
+        /* Тексты */
+        .section-title { margin: 0 0 15px 5px; color: #666; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .addr-text { font-family: monospace; color: #666; font-size: 13px; word-break: break-all; margin-top: 15px; }
+
+        /* НИЖНЕЕ МЕНЮ */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid #222;
+            display: flex; justify-content: space-around;
+            padding: 12px 0 35px; /* Учет safe area для iPhone */
             z-index: 1000;
         }
-        .nav-item { 
-            color: #666; 
-            font-size: 11px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            text-align: center;
+        .nav-btn {
+            background: none; border: none; color: #555;
+            font-size: 10px; font-weight: 600;
+            display: flex; flex-direction: column; align-items: center;
             width: 33%;
-            transition: 0.2s;
         }
-        .nav-item.active { color: #FFD700; transform: scale(1.05); }
-        .nav-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-btn.active { color: #fff; }
+        .nav-btn span.icon { font-size: 22px; margin-bottom: 4px; }
 
-        /* Консоль логов на экране */
-        #console { 
-            font-family: monospace; 
-            font-size: 11px; 
-            color: #0f0; 
-            margin-top: 20px; 
-            text-align: left; 
-            padding: 10px;
-            opacity: 0.8;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <!-- ================= ВКЛАДКА 1: КОШЕЛЕК ================= -->
-    <div id="wallet" class="tab-content active">
-        <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo" alt="CRED">
+    <!-- ШАПКА -->
+    <div class="header fade-in">
+        <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo-img">
         <h2>Galactic Wallet</h2>
-        
-        <!-- Панель подключения -->
-        <button onclick="connectWallet()" class="btn btn-primary" id="connectBtn">
-            🦊 Connect Wallet
-        </button>
-        <button onclick="addToken()" class="btn btn-outline">
-            ➕ Add Icon to Wallet
-        </button>
-
-        <!-- QR Код -->
-        <div class="qr-box">
-            <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/QR_Official.png" width="200" style="display:block">
-        </div>
-        <p style="margin-top:10px; color:#666">Scan to Pay (Polygon/ETH)</p>
+        <div id="statusBadge" class="status-badge">Not Connected</div>
+        <br>
+        <button id="mainBtn" class="main-connect" onclick="connectWallet()">Connect Wallet</button>
     </div>
 
+    <!-- === 1. ГЛАВНАЯ (HOME) === -->
+    <div id="tab-home" class="tab-content active fade-in">
+        
+        <div class="card" style="text-align: center;">
+            <p style="color:#aaa; font-size:12px; margin-bottom:20px; font-weight:600;">PERSONAL RECEIVE QR</p>
+            <div class="qr-container">
+                <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/QR_Official.png">
+            </div>
+            <div class="addr-text" onclick="copyAddress()">0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378</div>
+            <p style="font-size:10px; color:#444; margin-top:5px;">(Tap address to copy)</p>
+        </div>
 
-    <!-- ================= ВКЛАДКА 2: СЕРВИСЫ ================= -->
-    <div id="services" class="tab-content">
-        <h2>DeFi Services</h2>
-
-        <!-- Карточка 1: Подписка -->
-        <div class="card">
-            <h4>💎 VIP Club Membership</h4>
-            <p>Get access to private investor chat and voting rights.</p>
-            <p style="color: #fff;">Price: <strong>50 CRED / Month</strong></p>
-            
-            <div style="display: flex; gap: 10px;">
-                <button onclick="approveCred()" class="btn btn-outline" style="font-size:13px">1. Approve</button>
-                <button onclick="subscribe()" class="btn btn-primary" style="font-size:13px">2. Subscribe</button>
+        <div class="section-title">Actions</div>
+        <div class="action-list">
+            <div class="action-item" onclick="addToken()">
+                <div class="action-icon">🦊</div>
+                <div class="action-label">Add to MetaMask / Trust</div>
+                <div class="action-arrow">＋</div>
             </div>
         </div>
 
-        <!-- Карточка 2: Биржа -->
-        <div class="card">
-            <h4>🦄 Quick Buy</h4>
-            <p>Purchase CRED instantly via Uniswap Pool.</p>
-            <button onclick="window.open('https://app.uniswap.org/explore/tokens/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378')" class="btn btn-outline">
-                Open Uniswap
-            </button>
-        </div>
     </div>
 
-
-    <!-- ================= ВКЛАДКА 3: АДМИНКА ================= -->
-    <div id="admin" class="tab-content">
-        <h2>CEO Control Panel</h2>
+    <!-- === 2. РЫНОК (MARKET) === -->
+    <div id="tab-market" class="tab-content fade-in">
         
-        <div class="card">
-            <h4>💸 Salary Batch Sender</h4>
-            <p>Distribute tokens to multiple employees in one transaction.</p>
-            <button onclick="alert('Module BatchTransfer is active. Connect wallet to execute.')" class="btn btn-outline">Open Payroll</button>
+        <div class="section-title">Trade & Chart</div>
+        <div class="card" style="padding:0; overflow:hidden;">
+            <div class="action-item" style="border-radius:0;" onclick="window.open('https://app.uniswap.org/explore/tokens/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378')">
+                <div class="action-icon">🦄</div>
+                <div class="action-label">Uniswap Pool</div>
+                <div class="action-arrow">↗</div>
+            </div>
+            <div class="action-item" style="border-radius:0; border-bottom:none;" onclick="window.open('https://www.geckoterminal.com/ru/polygon_pos/pools/0x47f05d2098645a458f8631af45e1884c594b19e2b23a595c0f88148c6f6544e7')">
+                <div class="action-icon">🦎</div>
+                <div class="action-label">GeckoTerminal</div>
+                <div class="action-arrow">↗</div>
+            </div>
         </div>
 
+        <div class="section-title">Token Details</div>
         <div class="card">
-            <h4>📊 Contract Status</h4>
-            <p>Address: <span style="color:#aaa; font-family:monospace">0x5F9...1378</span></p>
-            <p>Supply: 100,000 CRED</p>
-            <button onclick="window.open('https://polygonscan.com/token/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378')" class="btn btn-outline">View on Explorer</button>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px;">
+                <span style="color:#888">Ticker</span>
+                <span>CRED</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px;">
+                <span style="color:#888">Network</span>
+                <span>Polygon (PoS)</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:14px;">
+                <span style="color:#888">Supply</span>
+                <span>100,000</span>
+            </div>
         </div>
+
     </div>
 
-    <!-- Логи (скрыты или видны) -->
-    <div id="console"></div>
-
-
-    <!-- ================= НИЖНЕЕ МЕНЮ ================= -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('wallet', this)">
-            <span class="nav-icon">👛</span>Wallet
+    <!-- === 3. CEO (ADMIN) === -->
+    <div id="tab-ceo" class="tab-content fade-in">
+        <div class="section-title">Admin Tools</div>
+        <div class="card" style="padding:0; overflow:hidden;">
+            <div class="action-item" onclick="alert('Open on Desktop Remix to use BatchTransfer')">
+                <div class="action-icon">💸</div>
+                <div class="action-label">Payroll System</div>
+                <div class="action-arrow">›</div>
+            </div>
+            <div class="action-item" style="border-bottom:none;" onclick="alert('Vesting Contract Safe')">
+                <div class="action-icon">🏦</div>
+                <div class="action-label">Team Vesting</div>
+                <div class="action-arrow">›</div>
+            </div>
         </div>
-        <div class="nav-item" onclick="switchTab('services', this)">
-            <span class="nav-icon">⚡️</span>Services
-        </div>
-        <div class="nav-item" onclick="switchTab('admin', this)">
-            <span class="nav-icon">🔑</span>CEO
-        </div>
+        <p style="text-align:center; font-size:11px; color:#333; margin-top:20px;">Secured by Polygon Network</p>
     </div>
 
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="nav-bar">
+        <button class="nav-btn active" onclick="switchTab('tab-home', this)">
+            <span class="icon">⟐</span>
+            <span>Wallet</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('tab-market', this)">
+            <span class="icon">📊</span>
+            <span>Market</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('tab-ceo', this)">
+            <span class="icon">⚡️</span>
+            <span>CEO</span>
+        </button>
+    </div>
 
-    <!-- ================= ЛОГИКА (JAVASCRIPT) ================= -->
+    <!-- СКРИПТЫ -->
     <script>
-        // АДРЕСА ВАШИХ КОНТРАКТОВ (Из нашей переписки)
         const CRED_ADDR = '0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378';
-        const SUBS_ADDR = '0x88b106dc29ae1e53f3ccbc724f9cdd2b2ffb4330'; // GalacticSubs
 
-        // Минимальные интерфейсы (ABI)
-        const ABI_ERC20 = [
-            "function approve(address spender, uint256 amount) external returns (bool)"
-        ];
-        const ABI_SUBS = [
-            "function subscribe(uint256 _planId) external"
-        ];
-
-        let provider, signer, userAddress;
-
-        // --- НАВИГАЦИЯ ---
-        function switchTab(tabId, navElement) {
-            // Скрыть все вкладки
+        function switchTab(tabId, btn) {
+            // Переключение экранов
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // Убрать подсветку меню
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
-            // Показать нужное
             document.getElementById(tabId).classList.add('active');
-            navElement.classList.add('active');
+            
+            // Подсветка кнопок
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
         }
-
-        function log(msg) {
-            const c = document.getElementById('console');
-            c.innerText = "> " + msg;
-            console.log(msg);
-        }
-
-        // --- БЛОКЧЕЙН ЛОГИКА ---
 
         async function connectWallet() {
-            if (!window.ethereum) return alert('Wallet not found! Open in MetaMask app or Trust Wallet browser.');
+            if (!window.ethereum) return alert('Open in Trust Wallet Browser or MetaMask!');
             
             try {
-                // Подключение Ethers v6
-                provider = new ethers.BrowserProvider(window.ethereum);
+                // Подключение
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const address = await signer.getAddress();
                 
-                // Запрос аккаунтов
-                signer = await provider.getSigner();
-                userAddress = await signer.getAddress();
+                // Смена дизайна шапки при успехе
+                const short = address.substring(0,6) + "..." + address.substring(38);
+                const badge = document.getElementById('statusBadge');
                 
-                // Обновление кнопки
-                document.getElementById('connectBtn').innerText = "✅ " + userAddress.substring(0,6) + "...";
-                log("Connected: " + userAddress);
-
-            } catch (err) {
-                log("Error: " + err.message);
-                alert("Connect failed. See logs.");
+                badge.innerText = "● Connected: " + short;
+                badge.style.color = "#4cd964"; // Зеленый
+                badge.style.background = "rgba(76, 217, 100, 0.1)";
+                
+                document.getElementById('mainBtn').style.display = 'none'; // Скрываем кнопку
+                
+            } catch (e) {
+                console.log(e);
             }
         }
 
         async function addToken() {
-            if (!window.ethereum) return alert('No wallet');
+            if (!window.ethereum) return;
             try {
                 await window.ethereum.request({
                     method: 'wallet_watchAsset',
@@ -279,57 +276,14 @@
                         },
                     },
                 });
-            } catch (e) { log("Add Token error: " + e.message); }
+            } catch (e) { console.log("User rejected"); }
         }
 
-        // --- ФУНКЦИИ СЕРВИСОВ ---
-
-        // 1. APPROVE (Дать разрешение контракту подписок)
-        async function approveCred() {
-            if (!signer) { await connectWallet(); if(!signer) return; }
-            
-            try {
-                const tokenContract = new ethers.Contract(CRED_ADDR, ABI_ERC20, signer);
-                
-                log("Approving 1000 CRED...");
-                // 1000 токенов с 18 нулями
-                const amount = ethers.parseUnits("1000", 18);
-                
-                const tx = await tokenContract.approve(SUBS_ADDR, amount);
-                log("Tx sent. Waiting for block...");
-                await tx.wait();
-                
-                alert("✅ Approved successfully! You can subscribe now.");
-                log("Approve confirmed.");
-                
-            } catch (err) {
-                log("Approve Failed: " + err.code);
-            }
-        }
-
-        // 2. SUBSCRIBE (Вызвать функцию subscribe на тарифе 0)
-        async function subscribe() {
-            if (!signer) { await connectWallet(); if(!signer) return; }
-
-            try {
-                const subContract = new ethers.Contract(SUBS_ADDR, ABI_SUBS, signer);
-                
-                log("Subscribing to Plan 0...");
-                const tx = await subContract.subscribe(0); // 0 - это наш первый тариф
-                
-                log("Tx sent... Wait...");
-                await tx.wait();
-                
-                alert("🎉 SUCCESS! You are now a VIP.");
-                log("Subscription Confirmed in Block.");
-                
-            } catch (err) {
-                log("Subscribe Failed: " + err.message);
-                // Частая ошибка: не сделали Approve или нет токенов
-                if (err.message.includes("transfer amount exceeds")) {
-                    alert("Error: Not enough CRED tokens or Approve missing.");
-                }
-            }
+        function copyAddress() {
+            navigator.clipboard.writeText(CRED_ADDR);
+            // Визуальный отклик (вибрация на мобильных, если поддерживается)
+            if (navigator.vibrate) navigator.vibrate(50);
+            alert('Contract Copied!');
         }
     </script>
 </body>
