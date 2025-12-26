@@ -6,121 +6,89 @@
     <title>Galactic Wallet</title>
     
     <style>
-        /* === 1. BASIC STYLES (PURE BLACK) === */
+        /* === BASIC STYLES === */
         body { 
             background-color: #000000; 
             color: #ffffff; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; 
-            padding: 0;
-            padding-bottom: 90px; /* Отступ для меню */
-            text-align: center;
-            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0; padding-bottom: 90px; 
+            text-align: center; -webkit-tap-highlight-color: transparent;
+            /* ВАЖНО: Фикс для перекрытия модального окна в Telegram */
+            --w3m-z-index: 10000 !important;
         }
-
-        /* Анимация */
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* HEADER */
         .header { padding: 40px 20px 20px; }
-        
         .logo { 
-            width: 85px; height: 85px; 
-            border-radius: 50%; 
-            box-shadow: 0 0 60px rgba(100, 100, 255, 0.25);
-            margin-bottom: 15px;
+            width: 90px; height: 90px; border-radius: 50%; 
+            box-shadow: 0 0 50px rgba(100, 100, 255, 0.3); margin-bottom: 15px; 
         }
-        
         h2 { font-weight: 800; font-size: 26px; margin: 0; letter-spacing: -0.5px; }
-        
-        /* КНОПКА ПОДКЛЮЧЕНИЯ */
-        w3m-button {
-            margin-top: 20px;
-            display: inline-block;
-            position: relative;
-            z-index: 1;
+
+        /* НАША КАСТОМНАЯ КНОПКА (Работает стабильнее стандартной) */
+        #customConnectBtn {
+            background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+            color: #000; border: none;
+            padding: 14px 30px; border-radius: 30px;
+            font-weight: 700; font-size: 16px;
+            margin-top: 25px; cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
+            transition: transform 0.1s;
+            outline: none;
         }
+        #customConnectBtn:active { transform: scale(0.95); }
 
         /* ВКЛАДКИ */
-        .tab-content { display: none; padding: 20px; }
+        .tab-content { display: none; padding: 20px; animation: fade 0.3s; }
         .tab-content.active { display: block; }
+        @keyframes fade { from{opacity:0} to{opacity:1} }
 
         /* QR КАРТОЧКА */
         .qr-card {
-            background: #fff;
-            padding: 12px;
-            border-radius: 18px;
-            width: 180px;
-            height: 180px;
-            margin: 10px auto 20px;
-            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.05);
+            background: #fff; padding: 12px; border-radius: 20px; width: 180px; height: 180px;
+            margin: 20px auto;
         }
         .qr-card img { width: 100%; display: block; }
-
-        /* СПИСОК ДЕЙСТВИЙ */
-        .action-list { 
-            background: #111; 
-            border-radius: 16px; 
-            overflow: hidden; 
-            border: 1px solid #222;
-            text-align: left;
-        }
         
+        .address-box {
+            font-family: monospace; color: #555; font-size: 12px; 
+            margin-top: 20px; word-break: break-all; cursor: pointer;
+            background: #111; padding: 10px; border-radius: 10px;
+        }
+
+        /* СПИСКИ ДЕЙСТВИЙ */
+        .action-list { background: #111; border-radius: 16px; border: 1px solid #222; text-align: left; }
         .action-item {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 20px;
-            border-bottom: 1px solid #222;
-            cursor: pointer;
-            text-decoration: none;
-            color: #fff;
-            transition: 0.2s;
+            padding: 16px 20px; border-bottom: 1px solid #222;
+            cursor: pointer; text-decoration: none; color: #fff;
         }
         .action-item:last-child { border-bottom: none; }
-        .action-item:active { background: #222; }
+        .icon { width: 25px; font-size: 18px; text-align: center; margin-right: 10px; }
+        .arrow { color: #444; font-size: 18px;}
         
-        .icon { font-size: 18px; margin-right: 15px; width: 24px; text-align: center; }
-        .label { font-size: 16px; font-weight: 500; flex-grow: 1; }
-        .arrow { color: #444; font-weight: bold; font-size: 14px; }
-
         /* НИЖНЕЕ МЕНЮ */
         .nav-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(15px);
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
             border-top: 1px solid #222;
             display: flex; justify-content: space-around;
-            padding: 12px 0 35px; /* Для iPhone Home Bar */
-            z-index: 1000;
+            padding: 12px 0 35px; z-index: 999;
         }
-        .nav-btn {
-            background: none; border: none; color: #555;
-            font-size: 10px; font-weight: 600;
-            display: flex; flex-direction: column; align-items: center;
-            width: 33%;
-        }
+        .nav-btn { background: none; border: none; color: #555; font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; width: 33%;}
+        .nav-btn span { font-size: 22px; margin-bottom: 4px; }
         .nav-btn.active { color: #fff; }
-        .nav-btn span.icon { font-size: 22px; margin-bottom: 4px; }
-
-        .contract-addr { 
-            font-family: monospace; color: #444; 
-            font-size: 11px; margin-top: 20px; 
-            word-break: break-all; cursor: pointer; 
-        }
-
-        /* FIX ДЛЯ TELEGRAM: Окно подключения всегда сверху */
-        :root { --w3m-z-index: 9999 !important; }
 
     </style>
 
-    <!-- СКРИПТ ПОДКЛЮЧЕНИЯ (Web3Modal) -->
+    <!-- AppKit (Web3Modal Logic) -->
     <script type="module">
         import { createWeb3Modal, defaultConfig } from 'https://esm.sh/@web3modal/ethers@5.0.0'
 
-        // 1. Project ID
+        // 1. PROJECT ID
         const projectId = '2c222c6077366f0763944634f379659b'
 
-        // 2. Настройки сети
+        // 2. NETWORK CONFIG
         const polygon = {
             chainId: 137,
             name: 'Polygon',
@@ -129,136 +97,132 @@
             rpcUrl: 'https://polygon-rpc.com'
         }
 
-        // 3. Метаданные
+        // 3. METADATA
         const metadata = {
             name: 'Galactic Wallet',
-            description: 'App',
+            description: 'Payment App',
             url: 'https://qendl.github.io',
             icons: ['https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png']
         }
 
-        // 4. Инициализация (с отключенным Email для простоты)
-        createWeb3Modal({
+        // 4. INIT MODAL (Без Email, с кнопкой всех кошельков)
+        const modal = createWeb3Modal({
             ethersConfig: defaultConfig({ metadata }),
             chains: [polygon],
             projectId,
             enableAnalytics: false,
-            enableEmail: false, // Отключаем Email, сразу показываем кошельки
-            allWallets: 'SHOW', 
+            enableEmail: false, // Отключает Email
+            allWallets: 'SHOW', // Показывает кнопку выбора кошелька
             themeMode: 'dark',
             themeVariables: {
-                '--w3m-accent': '#FFD700', // Золотой цвет акцента
-                '--w3m-border-radius-master': '1px'
+                '--w3m-z-index': '10000'
+            }
+        })
+
+        // === УПРАВЛЕНИЕ КНОПКОЙ ===
+        const btn = document.getElementById('customConnectBtn');
+
+        // Обработка нажатия на Золотую кнопку
+        btn.addEventListener('click', () => {
+            if (modal.getIsConnected()) {
+                modal.open({ view: 'Account' }); // Если подключен - открыть профиль
+            } else {
+                modal.open({ view: 'Connect' }); // Если нет - открыть список кошельков
+            }
+        })
+
+        // Слушаем изменения статуса
+        modal.subscribeProvider((state) => {
+            if (state.isConnected && state.address) {
+                // Если подключился - меняем дизайн кнопки
+                const shortAddr = state.address.substring(0,6) + "..." + state.address.substring(38);
+                btn.innerText = "✅ " + shortAddr;
+                btn.style.background = "#1a1a1a";
+                btn.style.color = "#4cd964";
+                btn.style.border = "1px solid #4cd964";
+            } else {
+                // Если отключился
+                btn.innerText = "Connect Wallet";
+                btn.style.background = "linear-gradient(135deg, #FFD700 0%, #FDB931 100%)";
+                btn.style.color = "#000";
+                btn.style.border = "none";
             }
         })
     </script>
 </head>
 <body>
 
-    <!-- ШАПКА -->
-    <div class="header fade-in">
+    <!-- ШАПКА С КНОПКОЙ -->
+    <div class="header">
         <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo">
         <h2>Galactic Wallet</h2>
-        <!-- КНОПКА ПОДКЛЮЧЕНИЯ -->
-        <w3m-button balance="hide"></w3m-button>
+        <!-- Наша надежная HTML кнопка -->
+        <button id="customConnectBtn">Connect Wallet</button>
     </div>
 
     <!-- ТАБ 1: КОШЕЛЕК -->
-    <div id="tab-wallet" class="tab-content active fade-in">
-        <p style="color:#666; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-top:20px; font-weight:700;">Receive Assets</p>
+    <div id="tab-home" class="tab-content active">
+        <p style="color:#444; font-size:11px; font-weight:700; margin-top:10px;">RECEIVE PAYMENTS</p>
         
         <div class="qr-card">
             <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/QR_Official.png">
         </div>
         
-        <div class="contract-addr" onclick="copyAddr()">
+        <div class="address-box" onclick="copyAddr()">
             0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378 ❐
         </div>
     </div>
 
     <!-- ТАБ 2: РЫНОК -->
-    <div id="tab-market" class="tab-content fade-in">
+    <div id="tab-market" class="tab-content">
         <div class="action-list">
-            
             <div class="action-item" onclick="window.open('https://app.uniswap.org/explore/tokens/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378')">
-                <span class="icon">🦄</span>
-                <span class="label">Uniswap Pool</span>
-                <span class="arrow">↗</span>
+                <span class="icon">🦄</span> <span>Buy on Uniswap</span> <span>↗</span>
             </div>
-
             <div class="action-item" onclick="window.open('https://www.geckoterminal.com/ru/polygon_pos/pools/0x47f05d2098645a458f8631af45e1884c594b19e2b23a595c0f88148c6f6544e7')">
-                <span class="icon">🦎</span>
-                <span class="label">GeckoTerminal</span>
-                <span class="arrow">↗</span>
+                <span class="icon">🦎</span> <span>GeckoTerminal</span> <span>↗</span>
             </div>
-
             <div class="action-item" onclick="window.open('https://dexscreener.com/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378')">
-                <span class="icon">📊</span>
-                <span class="label">DEXScreener</span>
-                <span class="arrow">↗</span>
+                <span class="icon">📊</span> <span>DEXScreener</span> <span>↗</span>
             </div>
-
         </div>
     </div>
 
     <!-- ТАБ 3: ИНФО -->
-    <div id="tab-info" class="tab-content fade-in">
+    <div id="tab-info" class="tab-content">
         <div class="action-list">
-            
             <a href="https://t.me/Galactic_Credit_Network" target="_blank" class="action-item">
-                <span class="icon">📢</span>
-                <span class="label">Telegram Channel</span>
-                <span class="arrow">›</span>
+                <span class="icon">📢</span> <span>Telegram Channel</span> <span>›</span>
             </a>
-
             <a href="https://github.com/Qendl/Galactic-Credit-Standard" target="_blank" class="action-item">
-                <span class="icon">🐙</span>
-                <span class="label">GitHub</span>
-                <span class="arrow">›</span>
+                <span class="icon">🐙</span> <span>Source Code</span> <span>›</span>
             </a>
-
             <div class="action-item" onclick="window.open('https://polygonscan.com/token/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378')">
-                <span class="icon">📜</span>
-                <span class="label">Smart Contract</span>
-                <span class="arrow">↗</span>
+                <span class="icon">📜</span> <span>Contract</span> <span>↗</span>
             </div>
-
         </div>
-        <p style="margin-top:30px; color:#333; font-size:12px;">Secured by Polygon Network</p>
+        <p style="color:#333; font-size:12px; margin-top:30px;">Galactic App v2.0</p>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
+    <!-- НАВИГАЦИЯ -->
     <div class="nav-bar">
-        <button class="nav-btn active" onclick="switchTab('tab-wallet', this)">
-            <span class="icon">⟐</span>
-            <span>Wallet</span>
-        </button>
-        <button class="nav-btn" onclick="switchTab('tab-market', this)">
-            <span class="icon">📊</span>
-            <span>Market</span>
-        </button>
-        <button class="nav-btn" onclick="switchTab('tab-info', this)">
-            <span class="icon">ℹ️</span>
-            <span>Info</span>
-        </button>
+        <button class="nav-btn active" onclick="switchTab('tab-home', this)"><span>⟐</span>Wallet</button>
+        <button class="nav-btn" onclick="switchTab('tab-market', this)"><span>📊</span>Market</button>
+        <button class="nav-btn" onclick="switchTab('tab-info', this)"><span>ℹ️</span>Info</button>
     </div>
 
-    <!-- СКРИПТ НАВИГАЦИИ -->
     <script>
-        function switchTab(tabId, navBtn) {
-            // Скрыть все вкладки
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // Убрать подсветку кнопок
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            
-            // Показать выбранное
-            document.getElementById(tabId).classList.add('active');
-            navBtn.classList.add('active');
+        // ЛОГИКА ВКЛАДОК
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
         }
-
+        
+        // КОПИРОВАНИЕ АДРЕСА
         function copyAddr() {
             navigator.clipboard.writeText('0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378');
-            if(navigator.vibrate) navigator.vibrate(50);
             alert('Copied!');
         }
     </script>
