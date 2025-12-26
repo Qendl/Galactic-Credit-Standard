@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CEO Dashboard</title>
+    
+    <style>
+        body { background-color: #050505; color: #fff; font-family: system-ui, sans-serif; text-align: center; margin: 0; padding-bottom: 50px; --w3m-z-index: 100000 !important; }
+        
+        /* КРАСНЫЙ СТИЛЬ (ЧТОБЫ ОТЛИЧАТЬ ОТ ОБЫЧНОГО) */
+        h2 { color: #ff4757; margin-top: 30px; letter-spacing: 1px; }
+        
+        .container { padding: 20px; max-width: 500px; margin: 0 auto; }
+        
+        /* Карточки управления */
+        .admin-card {
+            background: #1e1e24; border: 1px solid #333; border-radius: 16px;
+            padding: 20px; margin-bottom: 20px; text-align: left;
+        }
+        .card-title { color: #888; font-size: 12px; text-transform: uppercase; font-weight: bold; margin-bottom: 10px; display: block;}
+        
+        input {
+            width: 100%; padding: 12px; margin-bottom: 10px;
+            background: #111; border: 1px solid #444; color: white; border-radius: 8px;
+            box-sizing: border-box; font-size: 16px;
+        }
+
+        /* Кнопки действий */
+        .btn { width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; margin-top: 5px; }
+        
+        .btn-connect { background: #fff; color: #000; }
+        .btn-danger  { background: #ff4757; color: white; }
+        .btn-blue    { background: #2ed573; color: white; }
+        
+        .status { font-family: monospace; color: #ffff00; font-size: 11px; margin-top: 10px; word-break: break-all; }
+    </style>
+
+    <script type="module">
+        import { createWeb3Modal, defaultConfig } from 'https://esm.sh/@web3modal/ethers@5.0.0'
+        
+        const projectId = '7b83e930c9c584b3d751e271babdb18d' // Ваш ID
+        
+        const polygon = {
+            chainId: 137, name: 'Polygon', currency: 'POL',
+            explorerUrl: 'https://polygonscan.com', rpcUrl: 'https://polygon-rpc.com'
+        }
+        
+        const metadata = { name: 'Galactic CEO', description: 'Admin Panel', url: 'https://qendl.github.io', icons: [] }
+        
+        const modal = createWeb3Modal({
+            ethersConfig: defaultConfig({ metadata }), chains: [polygon], projectId,
+            enableAnalytics: false, enableEmail: false, allWallets: 'SHOW',
+            themeMode: 'dark', themeVariables: { '--w3m-accent': '#ff4757', '--w3m-z-index': '100000' }
+        })
+
+        // EXPOSE TO GLOBAL FOR HTML BUTTONS
+        window.modal = modal; 
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🔒 CEO CONTROL</h2>
+        
+        <button onclick="window.modal.open()" class="btn btn-connect" id="connBtn">Connect Admin Wallet</button>
+        <div id="userAddress" style="font-size:12px; color:#666; margin-top:5px;"></div>
+
+        <hr style="border-color:#222; margin: 25px 0;">
+
+        <!-- 1. VESTING (СЕЙФ) -->
+        <div class="admin-card">
+            <span class="card-title">🏦 TEAM VESTING RELEASE</span>
+            <p style="font-size:13px; color:#ccc;">Release unlocked tokens from safe to wallet.</p>
+            <button onclick="releaseVesting()" class="btn btn-blue">💰 Release Money</button>
+            <div id="statusVesting" class="status"></div>
+        </div>
+
+        <!-- 2. ЗАРПЛАТА (BatchTransfer) -->
+        <div class="admin-card">
+            <span class="card-title">💸 SINGLE PAYOUT (via Batch)</span>
+            
+            <input type="text" id="payTo" placeholder="Recipient Address (0x...)">
+            <input type="number" id="payAmount" placeholder="Amount (CRED)">
+            
+            <button onclick="approveSalary()" class="btn" style="background:#444; color:white; margin-bottom:5px;">1. Approve Contract</button>
+            <button onclick="sendSalary()" class="btn btn-danger">2. Send Payment</button>
+            
+            <div id="statusPay" class="status"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // === НАСТРОЙКИ КОНТРАКТОВ (ПРОВЕРЬТЕ АДРЕСА!) ===
+        const ADDR_TOKEN   = '0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378'; // Монета
+        // Ниже нужно вставить реальные адреса, которые мы создали ранее!
+        const ADDR_VESTING = '0x88b106dc29ae1e53f3ccbc724f9cdd2b2ffb4330'; // Если это адрес вестинга? (или замените)
+        const ADDR_BATCH   = '0x.....'; // <-- СЮДА ВСТАВИТЬ АДРЕС BATCHTRANSFER
+
+        // ABI (Интерфейсы)
+        const ABI_VESTING = ["function release(address token) external"];
+        const ABI_BATCH   = ["function multisend(address token, address[] recipients, uint256[] amounts) external"];
+        const ABI_ERC20   = ["function approve(address spender, uint256 amount) external returns (bool)"];
+
+        // Логика
+        async function getSigner() {
+            if(!window.ethereum) return alert("No Wallet");
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            return await provider.getSigner();
+        }
+
+        // 1. VESTING RELEASE
+        async function releaseVesting() {
+            const status = document.getElementById('statusVesting');
+            status.innerText = "Processing...";
+            try {
+                const signer = await getSigner();
+                const contract = new ethers.Contract(ADDR_VESTING, ABI_VESTING, signer);
+                
+                const tx = await contract.release(ADDR_TOKEN);
+                status.innerText = "Tx Sent... Waiting";
+                await tx.wait();
+                status.innerText = "✅ Success! Check wallet.";
+            } catch(e) { status.innerText = "Error: " + e.message.substring(0, 50); console.log(e); }
+        }
+
+        // 2. PAYROLL
+        async function approveSalary() {
+            try {
+                const signer = await getSigner();
+                const contract = new ethers.Contract(ADDR_TOKEN, ABI_ERC20, signer);
+                const amt = ethers.parseUnits("1000000", 18); // Большой аппрув
+                const tx = await contract.approve(ADDR_BATCH, amt);
+                await tx.wait();
+                alert("Approved!");
+            } catch(e) { alert("Err: " + e.message); }
+        }
+
+        async function sendSalary() {
+            const to = document.getElementById('payTo').value;
+            const amt = document.getElementById('payAmount').value;
+            const status = document.getElementById('statusPay');
+            
+            if(!to || !amt) return alert("Fill fields");
+
+            try {
+                const signer = await getSigner();
+                const contract = new ethers.Contract(ADDR_BATCH, ABI_BATCH, signer);
+                
+                // Формируем массивы (контракт принимает списки)
+                const recipients = [to];
+                const amounts = [ethers.parseUnits(amt, 18)];
+
+                status.innerText = "Sending...";
+                const tx = await contract.multisend(ADDR_TOKEN, recipients, amounts);
+                
+                await tx.wait();
+                status.innerText = "✅ Paid successfully!";
+            } catch(e) { status.innerText = "Error: " + e.message; console.log(e); }
+        }
+    </script>
+</body>
+</html>
