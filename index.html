@@ -6,7 +6,7 @@
     <title>Galactic Wallet</title>
     
     <style>
-        /* === 1. ЭСТЕТИКА (PURE BLACK) === */
+        /* === BASIC STYLES (PURE BLACK) === */
         body { 
             background-color: #000000; 
             color: #ffffff; 
@@ -17,6 +17,9 @@
             text-align: center;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
+            
+            /* КРИТИЧЕСКИЙ ФИКС ДЛЯ TELEGRAM: Окно поверх всего */
+            --w3m-z-index: 999999 !important;
         }
 
         /* Анимация появления */
@@ -35,19 +38,19 @@
         
         h2 { font-weight: 800; font-size: 26px; margin: 0; letter-spacing: -0.5px; }
         
-        /* КНОПКА ПОДКЛЮЧЕНИЯ (ЗОЛОТАЯ) */
+        /* ЗОЛОТАЯ КНОПКА CONNECT */
         #customConnectBtn {
             background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
             color: #000; border: none;
-            padding: 14px 30px; border-radius: 30px;
+            padding: 14px 35px; border-radius: 30px;
             font-weight: 700; font-size: 16px;
             margin-top: 25px; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 5px 25px rgba(255, 215, 0, 0.25);
             transition: transform 0.1s;
             outline: none;
-            min-width: 200px;
+            min-width: 220px;
         }
-        #customConnectBtn:active { transform: scale(0.95); opacity: 0.9; }
+        #customConnectBtn:active { transform: scale(0.96); opacity: 0.9; }
 
         /* ВКЛАДКИ */
         .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s; }
@@ -57,18 +60,24 @@
         .qr-card {
             background: #fff;
             padding: 12px;
-            border-radius: 18px;
-            width: 180px;
-            height: 180px;
-            margin: 10px auto 20px;
+            border-radius: 20px;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto 25px;
             box-shadow: 0 10px 40px rgba(255, 255, 255, 0.05);
         }
         .qr-card img { width: 100%; display: block; }
+        
+        .address-box {
+            font-family: monospace; color: #666; font-size: 12px; 
+            margin-top: 15px; word-break: break-all; cursor: pointer;
+            background: #111; padding: 12px; border-radius: 12px; border: 1px solid #222;
+        }
 
-        /* СПИСОК ДЕЙСТВИЙ (Меню ссылок) */
+        /* МЕНЮ ДЕЙСТВИЙ (LINKS) */
         .action-list { 
             background: #111; 
-            border-radius: 16px; 
+            border-radius: 18px; 
             overflow: hidden; 
             border: 1px solid #222;
             text-align: left;
@@ -76,58 +85,49 @@
         
         .action-item {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 20px;
+            padding: 18px 20px;
             border-bottom: 1px solid #222;
             cursor: pointer;
             text-decoration: none;
             color: #fff;
-            transition: 0.2s;
+            transition: background 0.2s;
         }
         .action-item:last-child { border-bottom: none; }
-        .action-item:active { background: #222; }
+        .action-item:active { background: #1a1a1a; }
         
         .icon { font-size: 18px; margin-right: 15px; width: 24px; text-align: center; }
         .label { font-size: 16px; font-weight: 500; flex-grow: 1; }
         .arrow { color: #444; font-weight: bold; font-size: 14px; }
 
-        /* НИЖНЕЕ МЕНЮ НАВИГАЦИИ */
+        /* НИЖНЯЯ ПАНЕЛЬ */
         .nav-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(15px);
+            background: rgba(10, 10, 10, 0.90);
+            backdrop-filter: blur(20px);
             border-top: 1px solid #222;
             display: flex; justify-content: space-around;
-            padding: 12px 0 35px; /* Учет Home Bar iPhone */
-            z-index: 1000;
+            padding: 12px 0 35px; /* Safe area for iPhone home bar */
+            z-index: 5000;
         }
         .nav-btn {
             background: none; border: none; color: #555;
             font-size: 10px; font-weight: 600;
             display: flex; flex-direction: column; align-items: center;
-            width: 33%;
+            width: 33%; transition: color 0.2s;
         }
         .nav-btn.active { color: #fff; }
-        .nav-btn span.icon { font-size: 22px; margin-bottom: 4px; }
-
-        .contract-addr { 
-            font-family: monospace; color: #444; 
-            font-size: 11px; margin-top: 20px; 
-            word-break: break-all; cursor: pointer; 
-        }
-
-        /* FIX ДЛЯ TELEGRAM: Окно подключения всегда сверху */
-        :root { --w3m-z-index: 100000 !important; }
+        .nav-btn span.nav-icon { font-size: 24px; margin-bottom: 4px; display: block; }
 
     </style>
 
-    <!-- AppKit (ЛОГИКА ПОДКЛЮЧЕНИЯ) -->
+    <!-- AppKit (LOGIC) -->
     <script type="module">
         import { createWeb3Modal, defaultConfig } from 'https://esm.sh/@web3modal/ethers@5.0.0'
 
-        // 1. ВАШ ЛИЧНЫЙ PROJECT ID
+        // 1. ВАШ PROJECT ID
         const projectId = '7b83e930c9c584b3d751e271babdb18d'
 
-        // 2. Настройки сети (Polygon)
+        // 2. Сеть
         const polygon = {
             chainId: 137,
             name: 'Polygon',
@@ -136,33 +136,37 @@
             rpcUrl: 'https://polygon-rpc.com'
         }
 
-        // 3. Метаданные сайта
         const metadata = {
             name: 'Galactic Wallet',
-            description: 'Official Payment App',
+            description: 'My Wallet',
             url: 'https://qendl.github.io',
             icons: ['https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png']
         }
 
-        // 4. Инициализация (CLEAN CONFIG - БЕЗ ЛИШНЕГО)
+        // 3. КОНФИГУРАЦИЯ (ВЫРЕЗАЕМ EMAIL)
         const modal = createWeb3Modal({
             ethersConfig: defaultConfig({ metadata }),
             chains: [polygon],
             projectId,
             enableAnalytics: false,
-            // Выключаем вообще всё лишнее
-            enableEmail: false,
-            enableOnramp: false,
-            enableSwaps: false, 
-            allWallets: 'SHOW', // Кнопка "Все кошельки"
+            // Полное отключение всех соц. функций
+            features: {
+                email: false,
+                socials: false,
+                history: false,
+                swaps: false,
+                onramp: false 
+            },
+            allWallets: 'SHOW', 
             themeMode: 'dark',
             themeVariables: {
                 '--w3m-accent': '#FFD700',
-                '--w3m-z-index': '100000'
+                '--w3m-border-radius-master': '2px',
+                '--w3m-z-index': '999999'
             }
         })
 
-        // === ЛОГИКА КАСТОМНОЙ КНОПКИ ===
+        // === ЛОГИКА КНОПКИ ===
         const btn = document.getElementById('customConnectBtn');
 
         btn.addEventListener('click', () => {
@@ -173,18 +177,15 @@
             }
         })
 
-        // Следим за статусом подключения
         modal.subscribeProvider((state) => {
             if (state.isConnected && state.address) {
                 const shortAddr = state.address.substring(0,6) + "..." + state.address.substring(38);
                 btn.innerText = "✅ " + shortAddr;
-                // Стиль активной кнопки
-                btn.style.background = "#1a1a1a";
+                btn.style.background = "#151515";
                 btn.style.color = "#4cd964"; 
                 btn.style.border = "1px solid #4cd964";
             } else {
                 btn.innerText = "Connect Wallet";
-                // Стиль по умолчанию
                 btn.style.background = "linear-gradient(135deg, #FFD700 0%, #FDB931 100%)";
                 btn.style.color = "#000";
                 btn.style.border = "none";
@@ -198,19 +199,19 @@
     <div class="header fade-in">
         <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo">
         <h2>Galactic Wallet</h2>
-        <!-- Наша специальная кнопка -->
+        <!-- Кастомная кнопка -->
         <button id="customConnectBtn">Connect Wallet</button>
     </div>
 
     <!-- ТАБ 1: КОШЕЛЕК -->
     <div id="tab-wallet" class="tab-content active fade-in">
-        <p style="color:#666; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-top:20px; font-weight:700;">YOUR RECEIVE ADDRESS</p>
+        <p style="color:#666; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-top:15px; font-weight:700;">YOUR RECEIVE ADDRESS</p>
         
         <div class="qr-card">
             <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/QR_Official.png">
         </div>
         
-        <div class="contract-addr" onclick="copyAddr()">
+        <div class="address-box" onclick="copyAddr()">
             0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378 ❐
         </div>
     </div>
@@ -218,7 +219,6 @@
     <!-- ТАБ 2: РЫНОК -->
     <div id="tab-market" class="tab-content fade-in">
         <div class="action-list">
-            
             <div class="action-item" onclick="window.open('https://app.uniswap.org/explore/tokens/polygon/0x5f9016b380782bd98d2c7893e5b2e39e95dd1378')">
                 <span class="icon">🦄</span>
                 <span class="label">Uniswap Pool</span>
@@ -236,14 +236,12 @@
                 <span class="label">DEXScreener</span>
                 <span class="arrow">↗</span>
             </div>
-
         </div>
     </div>
 
     <!-- ТАБ 3: ИНФО -->
     <div id="tab-info" class="tab-content fade-in">
         <div class="action-list">
-            
             <a href="https://t.me/Galactic_Credit_Network" target="_blank" class="action-item">
                 <span class="icon">📢</span>
                 <span class="label">Official Channel</span>
@@ -252,7 +250,7 @@
 
             <a href="https://github.com/Qendl/Galactic-Credit-Standard" target="_blank" class="action-item">
                 <span class="icon">🐙</span>
-                <span class="label">GitHub Source Code</span>
+                <span class="label">GitHub Source</span>
                 <span class="arrow">›</span>
             </a>
 
@@ -261,38 +259,40 @@
                 <span class="label">Verified Contract</span>
                 <span class="arrow">↗</span>
             </div>
-
         </div>
-        <p style="margin-top:30px; color:#333; font-size:12px;">App Version 5.0 • Secure</p>
+        <p style="color:#333; font-size:12px; margin-top:30px;">Galactic App v5.0 • Polygon</p>
     </div>
 
     <!-- НАВИГАЦИЯ -->
     <div class="nav-bar">
         <button class="nav-btn active" onclick="switchTab('tab-wallet', this)">
-            <span class="icon">⟐</span>
+            <span class="nav-icon">⟐</span>
             <span>Wallet</span>
         </button>
         <button class="nav-btn" onclick="switchTab('tab-market', this)">
-            <span class="icon">📊</span>
+            <span class="nav-icon">📊</span>
             <span>Market</span>
         </button>
         <button class="nav-btn" onclick="switchTab('tab-info', this)">
-            <span class="icon">ℹ️</span>
+            <span class="nav-icon">ℹ️</span>
             <span>Info</span>
         </button>
     </div>
 
-    <!-- СКРИПТЫ -->
     <script>
-        // Функция переключения вкладок
+        // Функция табов
         function switchTab(id, navBtn) {
-            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(x => x.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            
+            document.getElementById(id).style.display = 'block';
             navBtn.classList.add('active');
         }
         
-        // Функция копирования
+        // Показ по умолчанию
+        document.getElementById('tab-wallet').style.display = 'block';
+
+        // Копирование
         function copyAddr() {
             navigator.clipboard.writeText('0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378');
             if(navigator.vibrate) navigator.vibrate(50);
