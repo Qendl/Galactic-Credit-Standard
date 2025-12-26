@@ -6,14 +6,14 @@
     <title>Galactic Wallet</title>
     
     <style>
-        /* === 1. BASIC STYLES (PURE BLACK) === */
+        /* === 1. ЭСТЕТИКА (PURE BLACK) === */
         body { 
             background-color: #000000; 
             color: #ffffff; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0; 
             padding: 0;
-            padding-bottom: 90px; /* Отступ для нижнего меню */
+            padding-bottom: 90px; /* Отступ для меню */
             text-align: center;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
@@ -24,10 +24,10 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* HEADER */
-        .header { padding: 40px 20px 10px; }
+        .header { padding: 40px 20px 20px; }
         
         .logo { 
-            width: 90px; height: 90px; 
+            width: 85px; height: 85px; 
             border-radius: 50%; 
             box-shadow: 0 0 60px rgba(100, 100, 255, 0.25);
             margin-bottom: 15px;
@@ -116,7 +116,7 @@
         }
 
         /* FIX ДЛЯ TELEGRAM: Окно подключения всегда сверху */
-        :root { --w3m-z-index: 10000 !important; }
+        :root { --w3m-z-index: 100000 !important; }
 
     </style>
 
@@ -144,47 +144,47 @@
             icons: ['https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png']
         }
 
-        // 4. Инициализация (Специальные настройки для Telegram)
+        // 4. Инициализация (CLEAN CONFIG - БЕЗ ЛИШНЕГО)
         const modal = createWeb3Modal({
             ethersConfig: defaultConfig({ metadata }),
             chains: [polygon],
             projectId,
             enableAnalytics: false,
-            enableEmail: false, // Отключаем Email - сразу список кошельков
-            allWallets: 'SHOW', // Показать кнопку "All Wallets"
+            // Выключаем вообще всё лишнее
+            enableEmail: false,
+            enableOnramp: false,
+            enableSwaps: false, 
+            allWallets: 'SHOW', // Кнопка "Все кошельки"
             themeMode: 'dark',
             themeVariables: {
-                '--w3m-accent': '#FFD700', // Золотой цвет элементов
-                '--w3m-border-radius-master': '1px'
+                '--w3m-accent': '#FFD700',
+                '--w3m-z-index': '100000'
             }
         })
 
         // === ЛОГИКА КАСТОМНОЙ КНОПКИ ===
-        // Это скрипт, который заставляет кнопку работать правильно
         const btn = document.getElementById('customConnectBtn');
 
         btn.addEventListener('click', () => {
             if (modal.getIsConnected()) {
-                // Если уже подключен -> открыть профиль
                 modal.open({ view: 'Account' });
             } else {
-                // Если не подключен -> открыть выбор кошелька
                 modal.open({ view: 'Connect' });
             }
         })
 
-        // Следим за статусом подключения (чтобы менять текст на кнопке)
+        // Следим за статусом подключения
         modal.subscribeProvider((state) => {
             if (state.isConnected && state.address) {
                 const shortAddr = state.address.substring(0,6) + "..." + state.address.substring(38);
                 btn.innerText = "✅ " + shortAddr;
-                // Меняем стиль кнопки на "Подключено"
+                // Стиль активной кнопки
                 btn.style.background = "#1a1a1a";
-                btn.style.color = "#4cd964"; // Зеленый
+                btn.style.color = "#4cd964"; 
                 btn.style.border = "1px solid #4cd964";
             } else {
                 btn.innerText = "Connect Wallet";
-                // Возвращаем золотой стиль
+                // Стиль по умолчанию
                 btn.style.background = "linear-gradient(135deg, #FFD700 0%, #FDB931 100%)";
                 btn.style.color = "#000";
                 btn.style.border = "none";
@@ -198,7 +198,7 @@
     <div class="header fade-in">
         <img src="https://raw.githubusercontent.com/Qendl/Galactic-Credit-Standard/main/logo.png" class="logo">
         <h2>Galactic Wallet</h2>
-        <!-- Наша специальная кнопка (она теперь умная) -->
+        <!-- Наша специальная кнопка -->
         <button id="customConnectBtn">Connect Wallet</button>
     </div>
 
@@ -263,10 +263,10 @@
             </div>
 
         </div>
-        <p style="margin-top:30px; color:#333; font-size:12px;">App Version 3.0 • Secure</p>
+        <p style="margin-top:30px; color:#333; font-size:12px;">App Version 5.0 • Secure</p>
     </div>
 
-    <!-- НИЖНЯЯ ПАНЕЛЬ -->
+    <!-- НАВИГАЦИЯ -->
     <div class="nav-bar">
         <button class="nav-btn active" onclick="switchTab('tab-wallet', this)">
             <span class="icon">⟐</span>
@@ -282,22 +282,21 @@
         </button>
     </div>
 
-    <!-- JS СКРИПТ -->
+    <!-- СКРИПТЫ -->
     <script>
         // Функция переключения вкладок
         function switchTab(id, navBtn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            
+            document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             navBtn.classList.add('active');
         }
-
+        
         // Функция копирования
         function copyAddr() {
             navigator.clipboard.writeText('0x5F9016b380782bd98D2C7893e5b2E39e95Dd1378');
             if(navigator.vibrate) navigator.vibrate(50);
-            alert('Contract Copied!');
+            alert('Copied!');
         }
     </script>
 </body>
