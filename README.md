@@ -1,1 +1,0 @@
-# Galactic-Credit-Standard
